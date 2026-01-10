@@ -1,37 +1,39 @@
-name: Deploy API Image to Container Registry
+name: Deploy API Image to GHCR
+
 on:
   push:
     branches:
       - main
   workflow_dispatch:
 
-env:
-  REGISTRY: ${{ secrets.REGISTRY_NAME }}
-  IMAGE_NAME: tesouraria-api
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          login-server: ${{ env.REGISTRY }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create appsettings.Production.json file
         run: |
           cd src/Tesouraria.API
           echo "${{ secrets.APPSETTINGS_PRODUCTION_BASE64 }}" | base64 --decode > appsettings.Production.json
 
-      - name: Build and push Docker images with tags
+      - name: Build Docker image
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-                       -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_id }} .
-          
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_id }}
+          docker build \
+            -t ghcr.io/asafecode/tesouraria-api:latest \
+            -t ghcr.io/asafecode/tesouraria-api:${{ github.run_id }} \
+            .
+
+      - name: Push Docker images
+        run: |
+          docker push ghcr.io/asafecode/tesouraria-api:latest
+          docker push ghcr.io/asafecode/tesouraria-api:${{ github.run_id }}
