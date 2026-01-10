@@ -6,6 +6,6 @@ public static class ConfigurationExtension
 {
     public static string ConnectionString(this IConfiguration configuration)
     {
-        return Environment.GetEnvironmentVariable("DATABASE_URL") ?? configuration.GetConnectionString("DefaultConnection")!;
+        return configuration.GetConnectionString("DefaultConnection")!;
     } 
 }
