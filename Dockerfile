@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY src/ .
 
-WORKDIR /app/Backend/TarefasCrud.API
+WORKDIR /app/Tesouraria.API
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/out
@@ -13,4 +13,4 @@ WORKDIR /app
 
 COPY --from=build-env /app/out .
 
-ENTRYPOINT ["dotnet", "TarefasCrud.API.dll"]
+ENTRYPOINT ["dotnet", "Tesouraria.API.dll"]
