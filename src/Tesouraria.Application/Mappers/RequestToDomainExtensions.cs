@@ -1,0 +1,93 @@
+using Tesouraria.Application.UseCases.Commands.Expense.Create;
+using Tesouraria.Application.UseCases.Commands.Inflow.Create;
+using Tesouraria.Application.UseCases.Commands.Outflow.Create;
+using Tesouraria.Application.UseCases.Commands.User.Update;
+using Tesouraria.Application.UseCases.Commands.Users.Create;
+using Tesouraria.Application.UseCases.Commands.Worship.Create;
+using Tesouraria.Domain.Entities;
+using Tesouraria.Domain.Entities.ValueObjects;
+using Tesouraria.Domain.Services.Security;
+
+namespace Tesouraria.Application.Mappers;
+
+public static class RequestToDomainExtensions
+{
+    public static User ToUser(this RegisterUserCommand request, IPasswordEncripter passwordEncripter, Guid tenantId)
+    {
+        return User.Create(
+            request.Name,
+            passwordEncripter.Encrypt(request.Password),
+            request.Role,
+            request.DateOfBirth,
+            tenantId);
+    }    
+    
+    public static void ToUpdatedUser(this UpdateUserCommand command, User user)
+    {
+        user.Update(
+            command.Username,
+            command.Role,
+            command.DateOfBirth,
+            command.FullName,
+            command.Gender,
+            command.Phone,
+            command.ProfessionalWork,
+            command.EntryDate,
+            command.ConversionDate,
+            command.IsBaptized,
+            command.City,
+            command.Neighborhood
+        );
+    }
+    public static Inflow ToInflow(this CreateInflowCommand request, Guid userId, Guid tenantId)
+    {
+        return new Inflow
+        {
+            Date = request.Date,
+            Type = request.Type,
+            PaymentMethod = request.PaymentMethod,
+            Amount = request.Amount,
+            Description = request.Description,
+            WorshipId = request.WorshipId,
+            MemberId = request.UserId,
+            CreatedByUserId = userId,
+            TenantId = tenantId
+        };
+    }    
+    
+    public static Outflow ToOutflow(this CreateOutflowCommand request, Guid userId, Guid tenantId)
+    {
+        return new Outflow
+        {
+            Date = request.Date,
+            PaymentMethod = request.PaymentMethod,
+            Amount = request.Amount,
+            Description = request.Description,
+            CurrentInstallment = request.CurrentInstallment,
+            ExpenseId = request.ExpenseId,
+            CreatedByUserId = userId,
+            TenantId = tenantId
+        };
+    }   
+    public static Expense ToExpense(this CreateExpenseCommand request, Guid tenantId)
+    {
+        return new Expense
+        {
+            Name = request.Name,
+            Type = request.Type,
+            TotalInstallments = request.TotalInstallments,
+            TenantId = tenantId,
+            
+        };
+    }    
+    public static Worship ToWorship(this CreateWorshipCommand request, Guid tenantId)
+    {
+        return new Worship
+        {
+            DayOfWeek = request.DayOfWeek,
+            Time = request.Time,
+            Description = request.Description,
+            TenantId = tenantId,
+        };
+    }
+}

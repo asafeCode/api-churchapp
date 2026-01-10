@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A4FA5A0-E44D-42FC-8FBA-CF557005458F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesouraria.API", "src\Tesouraria.API\Tesouraria.API.csproj", "{5DD1B71C-9531-4E89-A3CA-B14621B48B61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesouraria.Application", "src\Tesouraria.Application\Tesouraria.Application.csproj", "{1AC37980-CF68-4E90-AB73-D53290A9FF22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesouraria.Domain", "src\Tesouraria.Domain\Tesouraria.Domain.csproj", "{806396C9-16E1-429E-9978-0306CAFDDAB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesouraria.Infrastructure", "src\Tesouraria.Infrastructure\Tesouraria.Infrastructure.csproj", "{AA85C14D-7450-4D7D-BD5D-D210BCC21741}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5DD1B71C-9531-4E89-A3CA-B14621B48B61} = {6A4FA5A0-E44D-42FC-8FBA-CF557005458F}
+		{1AC37980-CF68-4E90-AB73-D53290A9FF22} = {6A4FA5A0-E44D-42FC-8FBA-CF557005458F}
+		{806396C9-16E1-429E-9978-0306CAFDDAB4} = {6A4FA5A0-E44D-42FC-8FBA-CF557005458F}
+		{AA85C14D-7450-4D7D-BD5D-D210BCC21741} = {6A4FA5A0-E44D-42FC-8FBA-CF557005458F}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DD1B71C-9531-4E89-A3CA-B14621B48B61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD1B71C-9531-4E89-A3CA-B14621B48B61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD1B71C-9531-4E89-A3CA-B14621B48B61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD1B71C-9531-4E89-A3CA-B14621B48B61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AC37980-CF68-4E90-AB73-D53290A9FF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AC37980-CF68-4E90-AB73-D53290A9FF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AC37980-CF68-4E90-AB73-D53290A9FF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AC37980-CF68-4E90-AB73-D53290A9FF22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{806396C9-16E1-429E-9978-0306CAFDDAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{806396C9-16E1-429E-9978-0306CAFDDAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{806396C9-16E1-429E-9978-0306CAFDDAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{806396C9-16E1-429E-9978-0306CAFDDAB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA85C14D-7450-4D7D-BD5D-D210BCC21741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA85C14D-7450-4D7D-BD5D-D210BCC21741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA85C14D-7450-4D7D-BD5D-D210BCC21741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA85C14D-7450-4D7D-BD5D-D210BCC21741}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
