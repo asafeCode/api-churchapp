@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
     {
         policy
             //.WithOrigins("http://localhost:5173")
-            .WithOrigins("church-app.up.railway.app")
+            .WithOrigins("https://church.up.railway.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials(); 
