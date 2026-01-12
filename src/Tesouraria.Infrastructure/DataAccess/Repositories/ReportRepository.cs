@@ -111,7 +111,6 @@ public class ReportRepository : IReportRepository
 
         var period = $"{filter.DateFrom:MM/yyyy} a {filter.DateTo:MM/yyyy}";
 
-        // 6️⃣ Read Model final
         return new ResponseMonthlySummaryReadModel
         {
             Period = period,
