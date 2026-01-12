@@ -19,21 +19,18 @@ public class DoLoginHandler : ICommandHandler<DoLoginCommand, ResponseLoggedUser
     private readonly IAccessTokenGenerator _tokenGenerator;
     private readonly IRefreshTokenGenerator _refreshTokenGenerator;
     private readonly ITokenRepository _tokenRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
     public DoLoginHandler(IUserReadRepository readRepository, 
         IPasswordEncripter passwordEncripter, 
         IAccessTokenGenerator tokenGenerator, 
         IRefreshTokenGenerator refreshTokenGenerator, 
-        ITokenRepository tokenRepository, 
-        IUnitOfWork unitOfWork)
+        ITokenRepository tokenRepository)
     {
         _readRepository = readRepository;
         _passwordEncripter = passwordEncripter;
         _tokenGenerator = tokenGenerator;
         _refreshTokenGenerator = refreshTokenGenerator;
         _tokenRepository = tokenRepository;
-        _unitOfWork = unitOfWork;
     }
     
     public async Task<ResponseLoggedUserJson> HandleAsync(DoLoginCommand request, CancellationToken ct = default)

@@ -38,8 +38,9 @@ public class UserController : TesourariaControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangePassword([FromServices] IMediator handler,
-        [FromBody] ChangePasswordCommand command)
+        [FromBody] ChangePasswordRequest request)
     {
+        var command = new ChangePasswordCommand(request);
         await handler.SendAsync(command);
         return NoContent();
     }  
