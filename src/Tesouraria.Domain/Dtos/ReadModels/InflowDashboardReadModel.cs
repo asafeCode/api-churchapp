@@ -14,3 +14,7 @@ public record InflowDashboardReadModel(
     PaymentMethod PaymentMethod,
     decimal Amount
 );
+
+public record InflowsDashboardReadModel(
+    IEnumerable<InflowDashboardReadModel> Inflows,
+    decimal TotalAmount);

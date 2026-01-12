@@ -34,7 +34,7 @@ public static class DomainToRequestExtensions
             Neighborhood: user.Neighborhood
         );
     } 
-    public static ResponseOutflowsJson ToResponse(this IEnumerable<OutflowDashboardReadModel> outflows)
+    public static IEnumerable<ResponseShortOutflowJson> ToResponse(this IEnumerable<OutflowDashboardReadModel> outflows)
     {
         var response = outflows.Select(outflow => new ResponseShortOutflowJson(
             outflow.Id,
@@ -45,7 +45,7 @@ public static class DomainToRequestExtensions
             outflow.CurrentInstallment,
             outflow.TotalInstallments)); 
         
-        return new ResponseOutflowsJson { Outflows = response };
+        return response;
     }       
     public static ResponseTenantsJson ToResponse(this IEnumerable<Tenant> tenants)
     {
@@ -56,7 +56,7 @@ public static class DomainToRequestExtensions
 
         return new ResponseTenantsJson(response);
     }       
-    public static ResponseInflowsJson ToResponse(this IEnumerable<InflowDashboardReadModel> inflowReadModel)
+    public static IEnumerable<ResponseShortInflowJson> ToResponse(this IEnumerable<InflowDashboardReadModel> inflowReadModel)
     {
         var response = inflowReadModel.Select(inflow => new ResponseShortInflowJson(
             inflow.Id,
@@ -66,11 +66,11 @@ public static class DomainToRequestExtensions
             inflow.InflowType,
             inflow.MemberName,
             WorshipInfo: inflow.WorshipDay.HasValue 
-                ? $"{inflow.WorshipDay} | {inflow.WorshipTime}" : "—",
+                ? $"{inflow.WorshipDay.ToPortuguese()} | {inflow.WorshipTime}" : "—",
             inflow.PaymentMethod,
             inflow.Amount));
         
-        return new ResponseInflowsJson { Inflows = response };
+        return response;
     }       
     
     public static ResponseUsersJson ToResponse(this IEnumerable<User>? users)

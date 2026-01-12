@@ -1,13 +1,15 @@
 ﻿using FluentValidation;
 using Tesouraria.Domain.Repositories.User;
 using Tesouraria.Domain.Repositories.Worship;
+using Tesouraria.Domain.Services.Logged;
 
 namespace Tesouraria.Application.UseCases.Commands.Inflow.Create;
 
 public class CreateInflowValidator : AbstractValidator<CreateInflowCommand>
 {
-    public CreateInflowValidator(IWorshipRepository worshipRepository, IUserReadRepository userRepository)
+    public CreateInflowValidator(IWorshipRepository worshipRepository, IUserReadRepository userRepository, ILoggedUser user)
     {
+        var loggedUser = user.User();
         RuleFor(cmd => cmd.Date)
             .NotEmpty().WithMessage("A data é obrigatória.")
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
@@ -34,7 +36,7 @@ public class CreateInflowValidator : AbstractValidator<CreateInflowCommand>
                     return true;
 
                 return await worshipRepository
-                    .ExistActiveWorshipWithId(worshipId.Value, ct);
+                    .ExistActiveWorshipWithId(worshipId.Value, loggedUser.tenantId, ct);
             })
             .When(cmd => cmd.WorshipId.HasValue && cmd.WorshipId != Guid.Empty)
             .WithMessage("Culto não encontrado.");
@@ -49,7 +51,7 @@ public class CreateInflowValidator : AbstractValidator<CreateInflowCommand>
                     return true;
 
                 return await userRepository
-                    .ExistActiveUserWithId(userId.Value, ct);
+                    .ExistActiveUserWithId(userId.Value, loggedUser.tenantId, ct);
             })
             .When(cmd => cmd.UserId.HasValue && cmd.UserId != Guid.Empty)
             .WithMessage("Usuário não encontrado.");

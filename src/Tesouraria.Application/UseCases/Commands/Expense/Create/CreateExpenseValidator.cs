@@ -17,19 +17,44 @@ public class CreateExpenseValidator : AbstractValidator<CreateExpenseCommand>
             .IsInEnum()
             .WithMessage("Tipo de despesa inválido.");
 
-        RuleFor(cmd => cmd.TotalInstallments)
-            .GreaterThan(1)
-            .When(cmd => cmd.TotalInstallments.HasValue)
-            .WithMessage("O total de parcelas deve ser maior que 1.");
+        
+        When(cmd => cmd.Type == ExpenseType.Installment, () =>
+        {
+            RuleFor(cmd => cmd.TotalInstallments)
+                .NotNull()
+                .WithMessage("O total de parcelas é obrigatório para despesas parceladas.")
+                .GreaterThan(1)
+                .WithMessage("Despesas parceladas devem possuir mais de uma parcela.");
 
-        RuleFor(cmd => cmd)
-            .Must(cmd =>
-                cmd.Type == ExpenseType.Installment || !cmd.TotalInstallments.HasValue)
-            .WithMessage("Parcelas não devem ser informadas para despesas que não são parceladas.");
+            RuleFor(cmd => cmd.AmountOfEachInstallment)
+                .NotNull()
+                .WithMessage("O valor da parcela é obrigatório para despesas parceladas.")
+                .GreaterThan(0)
+                .WithMessage("O valor da parcela deve ser maior que zero.");
 
-        RuleFor(cmd => cmd)
-            .Must(cmd =>
-                cmd.Type != ExpenseType.Installment || cmd.TotalInstallments.HasValue)
-            .WithMessage("Despesas parceladas devem possuir o total de parcelas.");
+            RuleFor(cmd => cmd.CurrentInstallment)
+                .Must((cmd, currentInstallment) => 
+                    !currentInstallment.HasValue || currentInstallment <= cmd.TotalInstallments)
+                .WithMessage(cmd => 
+                    $"A parcela atual ({cmd.CurrentInstallment}) não pode ser maior que o total de parcelas ({cmd.TotalInstallments}).");
+            
+            RuleFor(cmd => cmd.CurrentInstallment)
+                .NotNull().GreaterThanOrEqualTo(0).WithMessage("A parcela atual deve ser maior ou igual a zero.");
+        });
+
+        When(cmd => cmd.Type != ExpenseType.Installment, () =>
+        {
+            RuleFor(cmd => cmd.CurrentInstallment)
+                .Must(currentInstallment => !currentInstallment.HasValue)
+                .WithMessage("Não pode informar parcela atual para despesas não parceladas.");
+
+            RuleFor(cmd => cmd.TotalInstallments)
+                .Must(totalInstallments => !totalInstallments.HasValue)
+                .WithMessage("Não pode informar total de parcelas para despesas não parceladas.");
+
+            RuleFor(cmd => cmd.AmountOfEachInstallment)
+                .Must(amount => !amount.HasValue)
+                .WithMessage("Não pode informar valor da parcela para despesas não parceladas.");
+        });
     }
 }

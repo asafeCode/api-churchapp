@@ -32,9 +32,10 @@ public static class DependencyInjectionExtension
     }
     private static void RegisterDecorators(IServiceCollection services)
     {
+        services.Decorate(typeof(IHandler<,>), typeof(TransactionDecorator<,>));
+        services.Decorate(typeof(IHandler<,>), typeof(TimingDecorator<,>));
         services.Decorate(typeof(IHandler<,>), typeof(LoggingDecorator<,>));
         services.Decorate(typeof(IHandler<,>), typeof(ValidationDecorator<,>));
-        services.Decorate(typeof(IHandler<,>), typeof(TransactionDecorator<,>));
     }
     private static void RegisterValidators(IServiceCollection services)
     {

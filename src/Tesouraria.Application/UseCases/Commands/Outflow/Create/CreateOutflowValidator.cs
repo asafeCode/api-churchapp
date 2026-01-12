@@ -1,14 +1,17 @@
-﻿using FluentValidation;
+﻿using System.Security.Cryptography;
+using FluentValidation;
 using Tesouraria.Domain.Entities.Enums;
 using Tesouraria.Domain.Repositories.Expense;
-using Tesouraria.Domain.Repositories.User;
+using Tesouraria.Domain.Services.Balance;
+using Tesouraria.Domain.Services.Logged;
 
 namespace Tesouraria.Application.UseCases.Commands.Outflow.Create;
 
 public class CreateOutflowValidator : AbstractValidator<CreateOutflowCommand>
 {
-    public CreateOutflowValidator(IExpenseRepository expenseRepository)
+    public CreateOutflowValidator(IExpenseRepository expenseRepository, ILoggedUser loggedUser)
     {
+        var (_, tenantId) = loggedUser.User();
         RuleFor(cmd => cmd.Date)
             .NotEmpty().WithMessage("A data é obrigatória.")
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
@@ -20,48 +23,23 @@ public class CreateOutflowValidator : AbstractValidator<CreateOutflowCommand>
         RuleFor(cmd => cmd.PaymentMethod)
             .IsInEnum().WithMessage("Método de pagamento inválido.");
 
-        RuleFor(cmd => cmd.Amount)
-            .GreaterThan(0).WithMessage("O valor deve ser maior que zero.");
-        
         RuleFor(cmd => cmd)
-            .CustomAsync(async (cmd, context, ct) =>
+            .CustomAsync( async (command, context, ct) =>
             {
-                if (cmd.ExpenseId == Guid.Empty)
-                {
-                    context.AddFailure("ExpenseId", "A despesa selecionada é inválida.");
-                    return;
-                }
-                
-                var expense = await expenseRepository.GetById(cmd.ExpenseId, ct);
-                
+                var expense = await expenseRepository.GetByIdWithoutTracking(command.ExpenseId, tenantId, ct);
                 if (expense is null)
                 {
-                    context.AddFailure("ExpenseId", "Despesa não encontrada.");
+                    context.AddFailure("Despesa inválida");
                     return;
                 }
 
-                if (expense.Type == ExpenseType.Installment &&
-                    cmd.CurrentInstallment is null)
+                if (expense.Type == ExpenseType.Installment && command.Amount.HasValue)
                 {
-                    context.AddFailure("CurrentInstallment",
-                        "Despesas parceladas exigem o número da parcela.");
+                    context.AddFailure("Esta despesa é parcelada. O valor da saída corresponde à parcela e não pode ser alterado aqui.");
+                    return;
                 }
-
-                if (expense.Type == ExpenseType.Installment &&
-                    cmd.CurrentInstallment is { } current &&
-                    (current <= 0 || current > expense.TotalInstallments))
-                {
-                    context.AddFailure("CurrentInstallment",
-                        $"A parcela deve estar entre 1 e {expense.TotalInstallments}.");
-                }
-
-                if (expense.Type != ExpenseType.Installment &&
-                    cmd.CurrentInstallment is not null)
-                {
-                    context.AddFailure("CurrentInstallment",
-                        "Parcelas não devem ser informadas para despesas não parceladas.");
-                }
+                
+                if (command.Amount is <= 0) context.AddFailure("O valor deve ser informado.");
             });
-
     }
 }

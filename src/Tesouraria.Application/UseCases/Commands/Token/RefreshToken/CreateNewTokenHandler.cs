@@ -24,7 +24,7 @@ public class CreateNewTokenHandler : ICommandHandler<CreateNewTokenCommand, Resp
 
     public async Task<ResponseTokensJson> HandleAsync(CreateNewTokenCommand command, CancellationToken ct = default)
     {
-        var refreshToken = await _tokenRepository.GetRefreshToken(command.RefreshToken);
+        var refreshToken = await _tokenRepository.GetRefreshToken(command.RefreshToken, ct);
         if (refreshToken is null)
             throw new RefreshTokenNotFoundException();
         

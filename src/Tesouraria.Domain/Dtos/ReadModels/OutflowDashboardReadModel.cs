@@ -11,3 +11,7 @@ public record OutflowDashboardReadModel(
     int? CurrentInstallment,
     int? TotalInstallments
 );
+
+public record OutflowsDashboardReadModel(
+    IEnumerable<OutflowDashboardReadModel> Outflows,
+    decimal TotalAmount);

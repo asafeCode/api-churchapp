@@ -7,5 +7,8 @@ public class CreateExpenseCommand : ICommand
 {
     public string Name { get; init; } = string.Empty;
     public ExpenseType Type { get; init; }
+    
     public int? TotalInstallments { get; init; }
+    public int? CurrentInstallment { get; init; }
+    public decimal? AmountOfEachInstallment { get; init; }
 }

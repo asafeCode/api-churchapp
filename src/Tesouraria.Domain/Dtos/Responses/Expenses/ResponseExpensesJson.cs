@@ -13,4 +13,6 @@ public record ResponseExpenseJson
    public string Name { get; init; } =  string.Empty;
    public ExpenseType ExpenseType { get; init; }
    public int? TotalInstallments { get; init; }
+   public int? CurrentInstallment { get; init; }
+   public decimal? AmountOfEachInstallment { get; init; }
 }

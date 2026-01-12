@@ -6,6 +6,7 @@ namespace Tesouraria.Domain.Dtos.Responses.Inflows;
 public record ResponseInflowsJson
 {
     public IEnumerable<ResponseShortInflowJson> Inflows { get; set; } = [];
+    public decimal TotalAmount { get; set; }
 }
 
 public record ResponseShortInflowJson(
