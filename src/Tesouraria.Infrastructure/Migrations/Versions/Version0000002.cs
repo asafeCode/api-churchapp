@@ -10,7 +10,9 @@ public class Version0000002 : VersionBase
         CreateTable("Expenses")
             .WithColumn("Name").AsString(255).NotNullable()
             .WithColumn("Type").AsInt32().NotNullable()
-            .WithColumn("TotalInstallments").AsInt32().Nullable();        
+            .WithColumn("CurrentInstallment").AsInt32().Nullable()
+            .WithColumn("TotalInstallments").AsInt32().Nullable()
+            .WithColumn("AmountOfEachInstallment").AsDecimal(18,2).Nullable();      
         
         CreateTable("Worships")
             .WithColumn("DayOfWeek").AsInt32().NotNullable()

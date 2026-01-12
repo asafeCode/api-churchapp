@@ -9,10 +9,12 @@ using Tesouraria.Domain.Repositories.Expense;
 using Tesouraria.Domain.Repositories.Inflow;
 using Tesouraria.Domain.Repositories.Outflow;
 using Tesouraria.Domain.Repositories.Owner;
+using Tesouraria.Domain.Repositories.Report;
 using Tesouraria.Domain.Repositories.Tenant;
 using Tesouraria.Domain.Repositories.Token;
 using Tesouraria.Domain.Repositories.User;
 using Tesouraria.Domain.Repositories.Worship;
+using Tesouraria.Domain.Services.Balance;
 using Tesouraria.Domain.Services.Logged;
 using Tesouraria.Domain.Services.Security;
 using Tesouraria.Domain.Services.Token;
@@ -68,6 +70,8 @@ public static class DependencyInjectionExtension
         services.AddScoped<IOutflowRepository, OutflowRepository>();
         services.AddScoped<IWorshipRepository, WorshipRepository>();
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<ICurrentBalance, BalanceRepository>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IMediator, Mediator>();

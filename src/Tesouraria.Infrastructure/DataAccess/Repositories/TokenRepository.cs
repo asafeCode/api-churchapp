@@ -9,11 +9,11 @@ public sealed class TokenRepository :  ITokenRepository
     private readonly TesourariaDbContext _dbContext;
     public TokenRepository(TesourariaDbContext dbContext) => _dbContext = dbContext;
     
-    public async Task<RefreshToken?> GetRefreshToken(string refreshToken) => await _dbContext
+    public async Task<RefreshToken?> GetRefreshToken(string refreshToken, CancellationToken ct = default) => await _dbContext
         .RefreshTokens
         .AsNoTracking()
         .Include(token => token.User)
-        .FirstOrDefaultAsync(token => token.Value.Equals(refreshToken));
+        .FirstOrDefaultAsync(token => token.Value.Equals(refreshToken), ct);
     
     public async Task AddRefreshToken(RefreshToken refreshToken)
     { 

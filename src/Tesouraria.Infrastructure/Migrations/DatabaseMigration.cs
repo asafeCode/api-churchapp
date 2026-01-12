@@ -17,15 +17,20 @@ public static class DatabaseMigration
     {
         var builder = new NpgsqlConnectionStringBuilder(connectionString);
         var databaseName = builder.Database;
-        
+
+        builder.Database = "postgres";
+
         using var connection = new NpgsqlConnection(builder.ConnectionString);
+        connection.Open();
 
         var exists = connection.ExecuteScalar<bool>(
             "SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = @name)",
             new { name = databaseName });
 
         if (!exists)
-            connection.Execute($"CREATE DATABASE \"{databaseName}\"");
+        {
+            connection.Execute($@"CREATE DATABASE ""{databaseName}""");
+        }
     }
 
     private static void MigrationDatabase(IServiceProvider serviceProvider)

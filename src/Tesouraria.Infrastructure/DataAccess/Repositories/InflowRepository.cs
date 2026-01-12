@@ -15,14 +15,14 @@ public class InflowRepository : IInflowRepository
     public async Task Add(Inflow inflow, CancellationToken cancellationToken = default) => await _dbContext
         .Inflows.AddAsync(inflow, cancellationToken);
 
-    public async Task<Inflow?> GetById(Guid inflowId, CancellationToken ct = default) => await _dbContext
+    public async Task<Inflow?> GetById(Guid inflowId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Inflows
         .AsNoTracking()
-        .SingleOrDefaultAsync(inf => inf.Id == inflowId, ct);
+        .SingleOrDefaultAsync(inf => inf.Id == inflowId && inf.TenantId == tenantId , ct);
     
-    public async Task<IEnumerable<InflowDashboardReadModel>> GetAll(InflowFilterDto filter, CancellationToken ct = default)
+    public async Task<InflowsDashboardReadModel> GetAll(InflowFilterDto filter, Guid tenantId,  CancellationToken ct = default)
     {
-        var query = _dbContext.Inflows.AsNoTracking().Where(i => i.Active);
+        var query = _dbContext.Inflows.AsNoTracking().Where(i => i.Active &&  i.TenantId == tenantId);
 
         if (filter.InitialDate.HasValue)
             query = query.Where(i => i.Date >= filter.InitialDate.Value);
@@ -54,23 +54,26 @@ public class InflowRepository : IInflowRepository
         if (filter.WorshipId.HasValue)
             query = query.Where(i => i.WorshipId == filter.WorshipId.Value);
 
-        var orderBy = filter.OrderBy ?? InflowOrderBy.Date;
+        query = query.OrderByDescending(o => o.CreatedOn);
+
+        var orderBy = filter.OrderBy;
         var asc = filter.OrderDirection ?? OrderDirection.Asc;
 
-        if (orderBy == InflowOrderBy.Amount)
+        query = orderBy switch
         {
-            query = asc == OrderDirection.Asc
+            InflowOrderBy.Amount => asc == OrderDirection.Asc
                 ? query.OrderBy(i => i.Amount)
-                : query.OrderByDescending(i => i.Amount);
-        }
-        else
-        {
-            query = asc == OrderDirection.Asc
+                : query.OrderByDescending(i => i.Amount),
+            
+            InflowOrderBy.Date => asc == OrderDirection.Asc
                 ? query.OrderBy(i => i.Date)
-                : query.OrderByDescending(i => i.Date);
-        }
+                : query.OrderByDescending(i => i.Date),
+            _ => query
+        };
+        
+        var totalAmount = await query.SumAsync(i => i.Amount, ct);
 
-        return await query
+        var result = await query
             .Select(i => new InflowDashboardReadModel(
                 i.Id,
                 i.Worship != null? i.WorshipId : Guid.Empty,
@@ -84,12 +87,14 @@ public class InflowRepository : IInflowRepository
                 i.Amount
             ))
             .ToListAsync(ct);
+        
+        return new InflowsDashboardReadModel(result, totalAmount);
     }
     
     public void Update(Inflow inflow) => _dbContext.Inflows.Update(inflow);
-
-    public Task Delete(Inflow inflow, CancellationToken ct = default)
+    public Task Delete(Inflow inflow, Guid tenantId, CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }
+    
 }

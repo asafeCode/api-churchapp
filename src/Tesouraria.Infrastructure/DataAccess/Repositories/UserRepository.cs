@@ -34,6 +34,8 @@ public sealed class UserRepository : IUserReadRepository, IUserUpdateRepository,
         if (filter.DateOfBirthFinal.HasValue)
             query = query.Where(u =>
                 u.DateOfBirth <= filter.DateOfBirthFinal.Value);
+        
+        query = query.OrderByDescending(o => o.CreatedOn);
 
         return await query.ToListAsync(ct);
     }
@@ -54,15 +56,10 @@ public sealed class UserRepository : IUserReadRepository, IUserUpdateRepository,
         .AsNoTracking()
         .FirstOrDefaultAsync(user => user.NormalizedUsername.Equals(name) && user.Active && user.TenantId == tenantId, ct);
     
-    public async Task<bool> ExistActiveUserWithId(Guid? userId, CancellationToken ct = default) => await _dbContext
+    public async Task<bool> ExistActiveUserWithId(Guid? userId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Users
-        .AnyAsync(user => user.Id.Equals(userId) && user.Active, ct);
-
-    public async Task<bool> ExistTenantFromUserId(Guid userId, Guid tenantId, CancellationToken ct = default) => await _dbContext
-        .Users
-        .AsNoTracking()
-        .AnyAsync(user => user.Id.Equals(userId) && user.Active && user.TenantId.Equals(tenantId), ct);
-
+        .AnyAsync(user => user.Id.Equals(userId) && user.Active && user.TenantId == tenantId, ct);
+    
     public async Task<User?> GetActiveUserById(Guid userId, Guid tenantId, CancellationToken ct = default) =>
         await _dbContext
             .Users

@@ -12,19 +12,22 @@ public class ExpenseRepository : IExpenseRepository
         .Expenses
         .AddAsync(expense, ct);
 
-    public async Task<bool> ExistActiveExpenseWithId(Guid? expenseId, CancellationToken ct = default) => await _dbContext
+    public async Task<bool> ExistActiveExpenseWithId(Guid expenseId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Expenses
         .AsNoTracking()
-        .AnyAsync(expense => expense.Id == expenseId, ct);
+        .AnyAsync(expense => expense.Id == expenseId && expense.TenantId == tenantId, ct);
     
-    public async Task<IEnumerable<Expense>> GetAll(CancellationToken ct = default) => await _dbContext
+    public async Task<IEnumerable<Expense>> GetAll(Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Expenses
         .AsNoTracking()
-        .Where(exp => exp.Active).ToListAsync(ct);
+        .Where(exp => exp.Active && exp.TenantId == tenantId).OrderByDescending(exp => exp.CreatedOn).ToListAsync(ct);
 
-    public async Task<Expense?> GetById(Guid expenseId, CancellationToken ct = default) => await _dbContext.Expenses
+    public async Task<Expense?> GetByIdWithTracking(Guid expenseId, Guid tenantId, CancellationToken ct = default) => await _dbContext.Expenses
+        .FirstOrDefaultAsync(exp => exp.Id == expenseId && exp.TenantId == tenantId, ct);
+
+    public async Task<Expense?> GetByIdWithoutTracking(Guid expenseId, Guid tenantId, CancellationToken ct = default) => await _dbContext.Expenses
         .AsNoTracking()
-        .FirstOrDefaultAsync(exp => exp.Id == expenseId, ct);
+        .FirstOrDefaultAsync(exp => exp.Id == expenseId && exp.TenantId == tenantId, ct);
     
     public void Update(Expense expense) => _dbContext.Expenses
         .Update(expense);

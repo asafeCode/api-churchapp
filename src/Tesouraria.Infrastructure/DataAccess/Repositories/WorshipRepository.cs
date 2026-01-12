@@ -15,21 +15,22 @@ public class WorshipRepository : IWorshipRepository
         .Worships
         .AddAsync(worship, ct);
     
-    public async Task<bool> ExistActiveWorshipWithId(Guid? worshipId, CancellationToken ct = default) => await _dbContext
+    public async Task<bool> ExistActiveWorshipWithId(Guid? worshipId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Worships
         .AsNoTracking()
-        .AnyAsync(w => w.Id == worshipId && w.Active, ct);
+        .AnyAsync(w => w.Id == worshipId && w.Active && w.TenantId == tenantId, ct);
     
-    public async Task<IEnumerable<Worship>> GetAll(CancellationToken ct = default) => await _dbContext.Worships
+    public async Task<IEnumerable<Worship>> GetAll(Guid tenantId, CancellationToken ct = default) => await _dbContext.Worships
             .AsNoTracking()
-            .Where(w => w.Active)
+            .Where(w => w.Active &&  w.TenantId == tenantId)
+            .OrderByDescending(w => w.CreatedOn)
             .ToListAsync(ct);
 
     public void Update(Worship worship, CancellationToken ct = default) => _dbContext
         .Worships
         .Update(worship);
     
-    public Task Delete(Worship worship, CancellationToken ct = default)
+    public Task Delete(Worship worship, Guid tenantId, CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }

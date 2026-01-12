@@ -27,8 +27,8 @@ public class Version0000003 : VersionBase
             .WithColumn("Date").AsDate().NotNullable()
             .WithColumn("PaymentMethod").AsInt32().NotNullable()
             .WithColumn("Amount").AsDecimal(18, 2).NotNullable()
+            .WithColumn("CurrentInstallmentPayed").AsInt32().Nullable()
             .WithColumn("Description").AsString(255).Nullable()
-            .WithColumn("CurrentInstallment").AsInt32().Nullable()
 
             .WithColumn("ExpenseId").AsGuid().NotNullable()
             .ForeignKey("FK_Outflows_Expense_Id", "Expenses", "Id")

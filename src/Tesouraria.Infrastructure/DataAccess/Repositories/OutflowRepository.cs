@@ -15,12 +15,12 @@ public class OutflowRepository : IOutflowRepository
     
     public async Task Add(Outflow outflow, CancellationToken ct = default) => await _dbContext.Outflows.AddAsync(outflow, ct);
 
-    public async Task<Outflow?> GetById(Guid outflowId, CancellationToken ct = default) => await _dbContext
-        .Outflows.AsNoTracking().SingleOrDefaultAsync(o => o.Id  == outflowId && o.Active, ct);
+    public async Task<Outflow?> GetById(Guid outflowId, Guid tenantId, CancellationToken ct = default) => await _dbContext
+        .Outflows.AsNoTracking().SingleOrDefaultAsync(o => o.Id  == outflowId && o.Active && o.TenantId == tenantId, ct);
     
-    public async Task<IEnumerable<OutflowDashboardReadModel>> GetAll(OutflowFilterDto filter, CancellationToken ct = default)
+    public async Task<OutflowsDashboardReadModel> GetAll(OutflowFilterDto filter, Guid tenantId, CancellationToken ct = default)
     {
-        var query = _dbContext.Outflows.AsNoTracking().Where(o => o.Active);
+        var query = _dbContext.Outflows.AsNoTracking().Where(o => o.Active && o.TenantId == tenantId);
 
         if (filter.InitialDate.HasValue)
             query = query.Where(o => o.Date >= filter.InitialDate.Value);
@@ -30,6 +30,9 @@ public class OutflowRepository : IOutflowRepository
 
         if (filter.PaymentMethod.HasValue)
             query = query.Where(o => o.PaymentMethod == filter.PaymentMethod.Value);
+        
+        if (filter.ExpenseType.HasValue)
+            query = query.Where(o => o.Expense.Type == filter.ExpenseType.Value);
 
         if (filter.AmountMin.HasValue)
             query = query.Where(o => o.Amount >= filter.AmountMin.Value);
@@ -39,31 +42,34 @@ public class OutflowRepository : IOutflowRepository
 
         if (!string.IsNullOrWhiteSpace(filter.Description))
             query = query.Where(o => o.Description != null && o.Description.Contains(filter.Description));
-
-        if (filter.CurrentInstallment.HasValue)
-            query = query.Where(o => o.CurrentInstallment == filter.CurrentInstallment.Value);
-
+        
         if (filter.ExpenseId.HasValue)
             query = query.Where(o => o.ExpenseId == filter.ExpenseId.Value);
 
         if (filter.CreatedByUserId.HasValue)
             query = query.Where(o => o.CreatedByUserId == filter.CreatedByUserId.Value);
-
-        return await query
+        
+        var totalAmount = await query.SumAsync(o => o.Amount, ct);
+        
+        query = query.OrderByDescending(o => o.CreatedOn);
+        
+        var result = await query
             .Select(o => new OutflowDashboardReadModel(
                 o.Id,
                 o.Expense.Name,
                 o.Date,
                 o.Amount,
                 o.PaymentMethod,
-                o.CurrentInstallment,
+                o.CurrentInstallmentPayed,
                 o.Expense.TotalInstallments))
             .ToListAsync(ct);
+
+        return new OutflowsDashboardReadModel(Outflows: result, TotalAmount: totalAmount);
     }
     
     public void Update(Outflow outflow) => _dbContext.Outflows.Update(outflow);
 
-    public Task Delete(Outflow outflow, CancellationToken ct = default)
+    public Task Delete(Outflow outflow, Guid tenantId,  CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }
