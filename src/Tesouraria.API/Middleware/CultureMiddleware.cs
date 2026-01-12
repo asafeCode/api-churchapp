@@ -15,12 +15,15 @@ public class CultureMiddleware
     {
         var supportedLanguages = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
-        var requestedCulture = context.Request.Headers.AcceptLanguage.FirstOrDefault();
+        var requestedCulture = context.Request.Headers.AcceptLanguage
+            .FirstOrDefault()?
+            .Split(',')
+            .FirstOrDefault();
 
         var cultureInfo = new CultureInfo("pt-BR");
 
         if (requestedCulture.IsNotEmpty()
-            && supportedLanguages.Any(c=> c.Name.Equals(requestedCulture)))
+            && supportedLanguages.Any(c=> c.Name.Equals(requestedCulture, StringComparison.OrdinalIgnoreCase)))
         {
             cultureInfo = new CultureInfo(requestedCulture);
 

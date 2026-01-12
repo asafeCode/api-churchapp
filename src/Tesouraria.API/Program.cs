@@ -1,10 +1,13 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Tesouraria.API.Converters;
 using Tesouraria.API.Extensions;
 using Tesouraria.API.Filters;
+using Tesouraria.API.Middleware;
 using Tesouraria.API.Token;
 using Tesouraria.Application;
 using Tesouraria.Domain.Services.Token;
 using Tesouraria.Infrastructure;
+using Tesouraria.Infrastructure.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +39,20 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-
 builder.Services.AddScoped<ITokenProvider, HttpContextTokenValue>();
 
+builder.Services.AddHealthChecks().AddDbContextCheck<TesourariaDbContext>();
+
 var app = builder.Build();
+app.MapHealthChecks("/Health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    AllowCachingResponses = false,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+    }
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -47,6 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CultureMiddleware>();
 app.UseCors("AllowTreasuryApp");
 app.UseHttpsRedirection();
 
