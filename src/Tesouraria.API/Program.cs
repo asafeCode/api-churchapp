@@ -13,7 +13,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowTreasuryApp", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            //.WithOrigins("http://localhost:5173")
+            .WithOrigins("https://tesouraria-api-production.up.railway.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials(); 
