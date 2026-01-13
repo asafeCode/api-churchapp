@@ -17,6 +17,7 @@ public class TesourariaDbContext : DbContext
     public DbSet<Worship> Worships { get; set; }
     public DbSet<Expense> Expenses { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<InviteCode> InviteCodes { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

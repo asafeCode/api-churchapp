@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Tesouraria.Application.Decorators;
+using Tesouraria.Application.UseCases.Commands.Auth.Register.Member;
+using Tesouraria.Application.UseCases.Commands.Auth.Register.Users;
 using Tesouraria.Application.UseCases.Commands.Expense.Create;
 using Tesouraria.Application.UseCases.Commands.Inflow.Create;
 using Tesouraria.Application.UseCases.Commands.Outflow.Create;
 using Tesouraria.Application.UseCases.Commands.User.ChangePassword;
 using Tesouraria.Application.UseCases.Commands.User.Update;
-using Tesouraria.Application.UseCases.Commands.Users.Create;
 using Tesouraria.Application.UseCases.Commands.Worship.Create;
 using Tesouraria.Domain.Abstractions.Mediator;
 
@@ -40,6 +41,7 @@ public static class DependencyInjectionExtension
     private static void RegisterValidators(IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
+        services.AddValidatorsFromAssemblyContaining<RegisterMemberValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateWorshipValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateOutflowValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateInflowValidator>();

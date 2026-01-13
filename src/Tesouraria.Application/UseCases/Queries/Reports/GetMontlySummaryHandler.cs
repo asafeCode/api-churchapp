@@ -1,7 +1,7 @@
 using FluentValidation;
 using Tesouraria.Domain.Abstractions.Mediator;
 using Tesouraria.Domain.Dtos.Filters;
-using Tesouraria.Domain.Dtos.Responses.Reports;
+using Tesouraria.Domain.Dtos.ReadModels;
 using Tesouraria.Domain.Repositories.Report;
 using Tesouraria.Domain.Services.Logged;
 

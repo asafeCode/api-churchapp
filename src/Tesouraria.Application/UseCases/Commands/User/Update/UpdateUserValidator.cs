@@ -18,9 +18,6 @@ public sealed class UpdateUserValidator : AbstractValidator<UpdateUserCommand>
             .NotEmpty().WithMessage("O nome é obrigatório.")
             .Length(3, 100).WithMessage("O nome deve ter entre 3 e 100 caracteres.");
 
-        RuleFor(x => x.Role)
-            .IsInEnum().WithMessage("O papel do usuário é inválido.");
-
         RuleFor(x => x.DateOfBirth)
             .NotEmpty().WithMessage("A data de nascimento é obrigatória.")
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))

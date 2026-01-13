@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tesouraria.API.Attributes;
 using Tesouraria.API.Controllers.Base;
-using Tesouraria.Application.UseCases.Commands.Users.Create;
 using Tesouraria.Application.UseCases.Commands.Users.Delete;
 using Tesouraria.Application.UseCases.Queries.GetUserById;
 using Tesouraria.Application.UseCases.Queries.UsersDashboard;
@@ -16,16 +15,6 @@ namespace Tesouraria.API.Controllers.App;
 [AuthenticatedUser(Roles.Admin)]
 public class UsersController : TesourariaControllerBase
 {
-    [HttpPost]
-    [Route("register")]
-    [ProducesResponseType(typeof(ResponseRegisteredUserJson), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterUserCommand command, [FromServices] IMediator handler)
-    {
-        var result = await handler.SendAsync<RegisterUserCommand, ResponseRegisteredUserJson>(command);
-        return Created(string.Empty, result);
-    }  
-    
     [HttpGet]
     [ProducesResponseType(typeof(ResponseUsersJson),StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers([FromServices] IMediator handler, [FromQuery] UserFilterDto filters)

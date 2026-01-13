@@ -1,5 +1,5 @@
 using Tesouraria.Domain.Dtos.Filters;
-using Tesouraria.Domain.Dtos.Responses.Reports;
+using Tesouraria.Domain.Dtos.ReadModels;
 
 namespace Tesouraria.Domain.Repositories.Report;
 

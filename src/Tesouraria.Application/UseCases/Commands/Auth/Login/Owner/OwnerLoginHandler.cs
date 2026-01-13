@@ -6,7 +6,7 @@ using Tesouraria.Domain.Repositories.Owner;
 using Tesouraria.Domain.Services.Security;
 using Tesouraria.Domain.Services.Token;
 
-namespace Tesouraria.Application.UseCases.Commands.Auth.OwnerLogin;
+namespace Tesouraria.Application.UseCases.Commands.Auth.Login.Owner;
 
 public class OwnerLoginHandler : ICommandHandler<OwnerLoginCommand, ResponseLoggedOwnerJson>
 {

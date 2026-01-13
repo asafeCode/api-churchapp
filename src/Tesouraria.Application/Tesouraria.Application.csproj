@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <Folder Include="UseCases\" />
+      <Folder Include="UseCases\Commands\Auth\Login\" />
     </ItemGroup>
 
     <ItemGroup>

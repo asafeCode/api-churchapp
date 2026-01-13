@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Tesouraria.Domain.Dtos.Filters;
-using Tesouraria.Domain.Dtos.Responses.Reports;
+using Tesouraria.Domain.Dtos.ReadModels;
 using Tesouraria.Domain.Entities.Enums;
 using Tesouraria.Domain.Repositories.Report;
 

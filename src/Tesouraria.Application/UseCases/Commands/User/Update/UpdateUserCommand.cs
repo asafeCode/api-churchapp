@@ -7,7 +7,6 @@ public sealed class UpdateUserCommand : ICommand
 {
     // Informações obrigatórias
     public required string Username { get; set; }
-    public UserRole Role { get; set; }
     public DateOnly DateOfBirth { get; set; }
 
     // Informações pessoais

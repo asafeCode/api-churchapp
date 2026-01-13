@@ -28,7 +28,7 @@ public class CreateNewTokenHandler : ICommandHandler<CreateNewTokenCommand, Resp
         if (refreshToken is null)
             throw new RefreshTokenNotFoundException();
         
-        if (DateTime.Compare(refreshToken.ExpiresOn, refreshToken.CreatedOn) < 0)
+        if (refreshToken.ExpiresOn <= DateTime.UtcNow)
             throw new RefreshTokenExpiredException();
 
         var newRefreshToken = _refreshTokenGenerator.CreateToken(refreshToken.UserId, refreshToken.TenantId);

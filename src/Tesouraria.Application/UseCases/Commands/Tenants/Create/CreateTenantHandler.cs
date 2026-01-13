@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Tesouraria.Application.Mappers;
-using Tesouraria.Application.UseCases.Commands.Users.Create;
+using Tesouraria.Application.UseCases.Commands.Auth.Register.Users;
 using Tesouraria.Domain.Abstractions.Mediator;
 using Tesouraria.Domain.Dtos.Responses.Tenants;
 using Tesouraria.Domain.Entities.Enums;
@@ -42,8 +42,6 @@ public class CreateTenantHandler : ICommandHandler<CreateTenantCommand, Response
         var userCommand = new RegisterUserCommand
         {
             Name = "admin",
-            Password = "admin123",
-            DateOfBirth = DateOnly.MinValue,
             Role = UserRole.Admin
         };
         var user = userCommand.ToUser(_passwordEncripter, tenant.Id);

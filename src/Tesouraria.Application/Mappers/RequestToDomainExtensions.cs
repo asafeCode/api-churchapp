@@ -1,8 +1,9 @@
+using Tesouraria.Application.UseCases.Commands.Auth.Register.Member;
+using Tesouraria.Application.UseCases.Commands.Auth.Register.Users;
 using Tesouraria.Application.UseCases.Commands.Expense.Create;
 using Tesouraria.Application.UseCases.Commands.Inflow.Create;
 using Tesouraria.Application.UseCases.Commands.Outflow.Create;
 using Tesouraria.Application.UseCases.Commands.User.Update;
-using Tesouraria.Application.UseCases.Commands.Users.Create;
 using Tesouraria.Application.UseCases.Commands.Worship.Create;
 using Tesouraria.Domain.Entities;
 using Tesouraria.Domain.Entities.Enums;
@@ -16,18 +17,28 @@ public static class RequestToDomainExtensions
     public static User ToUser(this RegisterUserCommand request, IPasswordEncripter passwordEncripter, Guid tenantId)
     {
         return User.Create(
-            request.Name,
-            passwordEncripter.Encrypt(request.Password),
-            request.Role,
-            request.DateOfBirth,
-            tenantId);
+            username: request.Name,
+            passwordHash: passwordEncripter.Encrypt(request.Password),
+            role: request.Role,
+            dateOfBirth: DateOnly.MinValue,
+            tenantId: tenantId);
+    }  
+    
+    public static User ToMember(this RegisterMemberCommand request, IPasswordEncripter passwordEncripter, Guid tenantId)
+    {
+        return User.Create(
+            username: request.Name,
+            passwordHash: passwordEncripter.Encrypt(request.Password),
+            role: UserRole.Member,
+            dateOfBirth: DateOnly.MinValue, 
+            tenantId: tenantId
+            );
     }    
     
     public static void ToUpdatedUser(this UpdateUserCommand command, User user)
     {
         user.Update(
             command.Username,
-            command.Role,
             command.DateOfBirth,
             command.FullName,
             command.Gender,

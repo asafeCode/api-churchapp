@@ -39,7 +39,6 @@ public class User : EntityBase
     public void UpdatePassword(string newPasswordHash) => PasswordHash = newPasswordHash;
     public void Update(
         string username,
-        UserRole role,
         DateOnly dateOfBirth,
         string? fullName,
         Gender? gender,
@@ -53,7 +52,6 @@ public class User : EntityBase
     {
         Username = username;
         NormalizedUsername = username.NormalizeUsername();
-        Role = role;
         DateOfBirth = dateOfBirth;
 
         FullName = fullName;

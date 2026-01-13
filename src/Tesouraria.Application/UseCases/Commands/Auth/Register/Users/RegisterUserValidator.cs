@@ -4,7 +4,7 @@ using Tesouraria.Domain.Exceptions;
 using Tesouraria.Domain.Repositories.User;
 using Tesouraria.Domain.Services.Logged;
 
-namespace Tesouraria.Application.UseCases.Commands.Users.Create;
+namespace Tesouraria.Application.UseCases.Commands.Auth.Register.Users;
 
 public class RegisterUserValidator : AbstractValidator<RegisterUserCommand>
 {
@@ -16,15 +16,6 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserCommand>
         
         RuleFor(x => x.Role)
             .IsInEnum().WithMessage("O papel do usuário é inválido.");
-        
-        RuleFor(x => x.DateOfBirth)
-            .NotEmpty().WithMessage("A data de nascimento é obrigatória.")
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
-            .WithMessage("A data de nascimento não pode ser no futuro.");
-        
-        RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("A senha é obrigatória.")
-            .MinimumLength(6).WithMessage("A senha deve ter pelo menos 6 caracteres.");
         
         RuleFor(x => x)
             .CustomAsync(async (command, context, cancellation) =>

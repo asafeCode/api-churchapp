@@ -5,12 +5,28 @@ using Tesouraria.Domain.Dtos.Responses.Tenants;
 using Tesouraria.Domain.Dtos.Responses.Users;
 using Tesouraria.Domain.Entities;
 using Tesouraria.Domain.Entities.Globals;
+using Tesouraria.Domain.Entities.ValueObjects;
 using Tesouraria.Domain.Extensions;
+using Tesouraria.Domain.Services.Token;
 
 namespace Tesouraria.Application.Mappers;
 
 public static class DomainToRequestExtensions
 {
+    public static ResponseLoggedUserJson ToLoggedResponse(this User user, RefreshToken refresh,
+        IAccessTokenGenerator tokenGenerator)
+    {
+        return new ResponseLoggedUserJson
+        {
+            Name = user.Username,
+            Role = user.Role,
+            Tokens = new ResponseTokensJson
+            {
+                AccessToken = tokenGenerator.Generate(new JwtClaims(user.Id, user.TenantId, user.Role.ToString())),
+                RefreshToken = refresh.Value
+            }
+        };
+    } 
     public static ResponseUserJson ToResponse(this User user)
     {
         return new ResponseUserJson(

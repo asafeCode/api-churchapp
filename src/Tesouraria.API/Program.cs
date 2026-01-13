@@ -11,18 +11,6 @@ using Tesouraria.Infrastructure.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowTreasuryApp", policy =>
-    {
-        policy
-            .WithOrigins("http://localhost:5173")
-            .WithOrigins("https://church.up.railway.app")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials(); 
-    });
-});
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new NullableGuidConverter());
@@ -43,6 +31,20 @@ builder.Services.AddScoped<ITokenProvider, HttpContextTokenValue>();
 
 builder.Services.AddHealthChecks().AddDbContextCheck<TesourariaDbContext>();
 
+var frontendUrl =  builder.Configuration.GetValue<string>("Settings:Invite:FrontendUrl");
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(frontendUrl!)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+
 var app = builder.Build();
 app.MapHealthChecks("/Health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
@@ -61,7 +63,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<CultureMiddleware>();
-app.UseCors("AllowTreasuryApp");
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -74,9 +76,10 @@ await app.RunAsync();
 
 namespace Tesouraria.API
 {
-    public partial class Program 
+    public partial class Program
     {
-        protected Program(){}
+        protected Program()
+        {
+        }
     }
 }
-

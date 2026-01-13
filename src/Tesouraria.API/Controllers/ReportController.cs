@@ -4,8 +4,8 @@ using Tesouraria.API.Controllers.Base;
 using Tesouraria.Application.UseCases.Queries.Reports;
 using Tesouraria.Domain.Abstractions.Mediator;
 using Tesouraria.Domain.Dtos.Filters;
+using Tesouraria.Domain.Dtos.ReadModels;
 using Tesouraria.Domain.Dtos.Responses;
-using Tesouraria.Domain.Dtos.Responses.Reports;
 using Tesouraria.Domain.Entities.Helpers;
 
 namespace Tesouraria.API.Controllers;

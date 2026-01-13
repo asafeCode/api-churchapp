@@ -1,4 +1,4 @@
-namespace Tesouraria.Domain.Dtos.Responses.Reports;
+namespace Tesouraria.Domain.Dtos.ReadModels;
 
 public record ResponseMonthlySummaryReadModel
 {

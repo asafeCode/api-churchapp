@@ -1,15 +1,13 @@
-﻿using FluentValidation;
-using Tesouraria.Application.Mappers;
+﻿using Tesouraria.Application.Mappers;
 using Tesouraria.Domain.Abstractions.Mediator;
 using Tesouraria.Domain.Dtos.Responses.Users;
-using Tesouraria.Domain.Repositories;
 using Tesouraria.Domain.Repositories.Token;
 using Tesouraria.Domain.Repositories.User;
 using Tesouraria.Domain.Services.Logged;
 using Tesouraria.Domain.Services.Security;
 using Tesouraria.Domain.Services.Token;
 
-namespace Tesouraria.Application.UseCases.Commands.Users.Create;
+namespace Tesouraria.Application.UseCases.Commands.Auth.Register.Users;
 public class RegisterUserHandler : ICommandHandler<RegisterUserCommand, ResponseRegisteredUserJson>
 {
     private readonly IUserWriteRepository  _writeRepository;

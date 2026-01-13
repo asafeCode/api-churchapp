@@ -15,12 +15,14 @@ using Tesouraria.Domain.Repositories.Token;
 using Tesouraria.Domain.Repositories.User;
 using Tesouraria.Domain.Repositories.Worship;
 using Tesouraria.Domain.Services.Balance;
+using Tesouraria.Domain.Services.Link;
 using Tesouraria.Domain.Services.Logged;
 using Tesouraria.Domain.Services.Security;
 using Tesouraria.Domain.Services.Token;
 using Tesouraria.Infrastructure.DataAccess;
 using Tesouraria.Infrastructure.DataAccess.Repositories;
 using Tesouraria.Infrastructure.Extensions;
+using Tesouraria.Infrastructure.Services.Links;
 using Tesouraria.Infrastructure.Services.Logged;
 using Tesouraria.Infrastructure.Services.Mediator;
 using Tesouraria.Infrastructure.Services.Security;
@@ -92,6 +94,14 @@ public static class DependencyInjectionExtension
         services.Configure<RefreshTokenSettings>(options =>
             configuration.GetSection("Settings:Tokens:Refresh").Bind(options));
         services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
+        
+        services.Configure<InviteSettings>(options =>
+            configuration.GetSection("Settings:Invite").Bind(options));
+        services.AddScoped<IInviteCodeGenerator, InviteCodeGenerator>();
+        services.AddScoped<IInviteCodeValidator, InviteCodeValidator>();
+        services.AddScoped<IInviteLinkGenerator, InviteLinkGenerator>();
+
+
     }
     private static void AddPasswordEncripter(this IServiceCollection services)
     {

@@ -1,6 +1,6 @@
 ﻿using Tesouraria.Domain.Abstractions.Mediator;
 
-namespace Tesouraria.Application.UseCases.Commands.Auth.UserLogin;
+namespace Tesouraria.Application.UseCases.Commands.Auth.Login.User;
 
 public class DoLoginCommand : ICommand
 {
