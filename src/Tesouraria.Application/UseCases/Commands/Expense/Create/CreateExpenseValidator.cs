@@ -39,7 +39,8 @@ public class CreateExpenseValidator : AbstractValidator<CreateExpenseCommand>
                     $"A parcela atual ({cmd.CurrentInstallment}) não pode ser maior que o total de parcelas ({cmd.TotalInstallments}).");
             
             RuleFor(cmd => cmd.CurrentInstallment)
-                .NotNull().GreaterThanOrEqualTo(0).WithMessage("A parcela atual deve ser maior ou igual a zero.");
+                .NotNull().WithMessage("A parcela atual não pode ser vazia.")
+                .GreaterThanOrEqualTo(0).WithMessage("A parcela atual deve ser maior ou igual a zero.");
         });
 
         When(cmd => cmd.Type != ExpenseType.Installment, () =>
