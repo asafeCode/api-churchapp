@@ -21,12 +21,12 @@ public class RegisterMemberValidator : AbstractValidator<RegisterMemberCommand>
             .Must(cmd => Guid.TryParse(cmd, out _))
             .WithMessage("Código de convite inválido.");
         
-        RuleFor(x => x.Name)
-            .MustAsync(async (name, cancellation) =>
+        RuleFor(x => x)
+            .CustomAsync(async (command, context, cancellation) =>
             {
                 var (_, tenantId) = user.User();
-                return !await repository.ExistsUserWithName(name.NormalizeUsername(), tenantId, cancellation);
-            })
-            .WithMessage(ResourceMessagesException.NAME_ALREADY_REGISTERED);
+                if (await repository.ExistsUserWithName(command.Name.NormalizeUsername(), tenantId, cancellation))
+                    context.AddFailure("Name", ResourceMessagesException.NAME_ALREADY_REGISTERED);
+            });
     }
 }

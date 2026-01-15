@@ -47,14 +47,14 @@ public sealed class UserRepository : IUserReadRepository, IUserUpdateRepository,
             .Select(u => u.Role) 
             .FirstOrDefaultAsync(ct);
 
-    public async Task<bool> ExistsUserWithName(string name, Guid tenantId, CancellationToken ct) => await _dbContext
+    public async Task<bool> ExistsUserWithName(string normalizedName, Guid tenantId, CancellationToken ct) => await _dbContext
         .Users
-        .AnyAsync(user => user.Username.Equals(name) && user.TenantId == tenantId, ct);
+        .AnyAsync(user => user.NormalizedUsername == normalizedName && user.TenantId == tenantId, ct);
 
-    public async Task<User?> GetUserByName(string name, Guid tenantId, CancellationToken ct) => await _dbContext
+    public async Task<User?> GetUserByName(string normalizedName, Guid tenantId, CancellationToken ct) => await _dbContext
         .Users
         .AsNoTracking()
-        .FirstOrDefaultAsync(user => user.NormalizedUsername.Equals(name) && user.Active && user.TenantId == tenantId, ct);
+        .FirstOrDefaultAsync(user => user.NormalizedUsername == normalizedName && user.Active && user.TenantId == tenantId, ct);
     
     public async Task<bool> ExistActiveUserWithId(Guid? userId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Users

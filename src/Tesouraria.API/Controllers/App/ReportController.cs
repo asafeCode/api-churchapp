@@ -8,7 +8,7 @@ using Tesouraria.Domain.Dtos.ReadModels;
 using Tesouraria.Domain.Dtos.Responses;
 using Tesouraria.Domain.Entities.Helpers;
 
-namespace Tesouraria.API.Controllers;
+namespace Tesouraria.API.Controllers.App;
 
 [AuthenticatedUser(Roles.Admin)]
 public class ReportController : TesourariaControllerBase

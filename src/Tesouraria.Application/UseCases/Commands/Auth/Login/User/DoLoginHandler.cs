@@ -14,16 +14,16 @@ namespace Tesouraria.Application.UseCases.Commands.Auth.Login.User;
 
 public class DoLoginHandler : ICommandHandler<DoLoginCommand, ResponseLoggedUserJson>
 {
-    private readonly IUserReadRepository  _readRepository;
-    private readonly IPasswordEncripter  _passwordEncripter;
+    private readonly IUserReadRepository _readRepository;
+    private readonly IPasswordEncripter _passwordEncripter;
     private readonly IAccessTokenGenerator _tokenGenerator;
     private readonly IRefreshTokenGenerator _refreshTokenGenerator;
     private readonly ITokenRepository _tokenRepository;
 
-    public DoLoginHandler(IUserReadRepository readRepository, 
-        IPasswordEncripter passwordEncripter, 
-        IAccessTokenGenerator tokenGenerator, 
-        IRefreshTokenGenerator refreshTokenGenerator, 
+    public DoLoginHandler(IUserReadRepository readRepository,
+        IPasswordEncripter passwordEncripter,
+        IAccessTokenGenerator tokenGenerator,
+        IRefreshTokenGenerator refreshTokenGenerator,
         ITokenRepository tokenRepository)
     {
         _readRepository = readRepository;
@@ -32,21 +32,18 @@ public class DoLoginHandler : ICommandHandler<DoLoginCommand, ResponseLoggedUser
         _refreshTokenGenerator = refreshTokenGenerator;
         _tokenRepository = tokenRepository;
     }
-    
+
     public async Task<ResponseLoggedUserJson> HandleAsync(DoLoginCommand request, CancellationToken ct = default)
     {
         var user = await _readRepository.GetUserByName(request.Name.NormalizeUsername(), request.TenantId, ct);
+        
         if (user is null || _passwordEncripter.IsValid(request.Password, user.PasswordHash).IsFalse()) 
             throw new InvalidLoginException();
-        
-        var refreshToken = await CreateAndSaveRefreshToken(user.Id, user.TenantId);
+
+        var refreshToken = _refreshTokenGenerator.CreateToken(user.Id, user.TenantId);
+
+        await _tokenRepository.AddRefreshTokenSafe(refreshToken, ct);
         
         return user.ToLoggedResponse(refreshToken, _tokenGenerator);
-    }
-    private async Task<RefreshToken> CreateAndSaveRefreshToken(Guid userId, Guid tenantId)
-    {
-        var refreshToken = _refreshTokenGenerator.CreateToken(userId, tenantId);
-        await _tokenRepository.AddRefreshToken(refreshToken);
-        return refreshToken;
     }
 }

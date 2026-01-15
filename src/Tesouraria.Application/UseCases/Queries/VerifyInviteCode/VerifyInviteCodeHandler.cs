@@ -18,14 +18,11 @@ public class VerifyInviteCodeHandler : IQueryHandler<VerifyInviteCodeQuery, Veri
     public async Task<VerifyInviteCodeResponseDto> HandleAsync(VerifyInviteCodeQuery query, CancellationToken ct = default)
     {
         var inviteCode = await _codeValidator.ValidateAndGetCode(query.Code, ct);
-        var tenant = await _tenantRepository.GetTenantById(inviteCode.TenantId, ct);
-        
-        if (tenant is null) return new VerifyInviteCodeResponseDto { IsValid = false };
         
         return new VerifyInviteCodeResponseDto
         {
             IsValid = true,
-            TenantName = tenant.Name,
+            TenantName = inviteCode.TenantName,
             Code = inviteCode.Value
         };
     }

@@ -19,4 +19,8 @@ public class TenantRepository : ITenantRepository
         .Tenants
         .AsNoTracking()
         .FirstOrDefaultAsync(t => t.Id == tenantId, ct);
+
+    public async Task<bool> ExistTenantWithId(Guid tenantId, CancellationToken ct = default) => await _context
+        .Tenants
+        .AnyAsync(t => t.Id == tenantId && t.Active, ct);
 }

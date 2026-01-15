@@ -1,0 +1,22 @@
+services:
+  tesouraria-api:
+    container_name: tesouraria-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "7144:8080"
+
+    networks:
+      - tesouraria-net
+
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+
+networks:
+  tesouraria-net:
+    external: true

@@ -41,13 +41,10 @@ public class RegisterMemberHandler : ICommandHandler<RegisterMemberCommand, Resp
     {
         var inviteCode = await _codeValidator.ValidateAndGetCode(command.InviteCode, ct);
         
-        var tenant = await _tenantRepository.GetTenantById(inviteCode.TenantId, ct);
-        if (tenant == null) throw new NotFoundException("Tenant não encontrado");
-        
-        var user = command.ToMember(_passwordEncripter, tenant.Id);
+        var user = command.ToMember(_passwordEncripter, inviteCode.TenantId);
         await _writeRepository.AddUserAsync(user);
         var refreshToken = _refreshTokenGenerator.CreateToken(user.Id, user.TenantId);
-        await _tokenRepository.AddRefreshToken(refreshToken);
+        await _tokenRepository.AddRefreshTokenSafe(refreshToken, ct);
         
         return user.ToLoggedResponse(refreshToken, _tokenGenerator);
     }

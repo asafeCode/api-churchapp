@@ -24,7 +24,7 @@ public class CreateNewTokenHandler : ICommandHandler<CreateNewTokenCommand, Resp
 
     public async Task<ResponseTokensJson> HandleAsync(CreateNewTokenCommand command, CancellationToken ct = default)
     {
-        var refreshToken = await _tokenRepository.GetRefreshToken(command.RefreshToken, ct);
+        var refreshToken = await _tokenRepository.GetRefreshTokenForUpdate(command.RefreshToken, ct);
         if (refreshToken is null)
             throw new RefreshTokenNotFoundException();
         
@@ -33,11 +33,14 @@ public class CreateNewTokenHandler : ICommandHandler<CreateNewTokenCommand, Resp
 
         var newRefreshToken = _refreshTokenGenerator.CreateToken(refreshToken.UserId, refreshToken.TenantId);
         
-        await _tokenRepository.AddRefreshToken(newRefreshToken);
+        await _tokenRepository.AddRefreshTokenSafe(newRefreshToken, ct);
 
         return new ResponseTokensJson
         {
-            AccessToken = _accessTokenGenerator.Generate(new JwtClaims(refreshToken.UserId, refreshToken.User.TenantId, refreshToken.User.Role.ToString())),
+            AccessToken = _accessTokenGenerator.Generate(new JwtClaims(
+                refreshToken.UserId, 
+                refreshToken.TenantId, 
+                refreshToken.UserRole.ToString())),
             RefreshToken = newRefreshToken.Value
         };
     }

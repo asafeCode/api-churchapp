@@ -35,7 +35,7 @@ public class RegisterUserHandler : ICommandHandler<RegisterUserCommand, Response
         var user = command.ToUser(_passwordEncripter, tenantId);
         await _writeRepository.AddUserAsync(user);
         var refreshToken = _refreshTokenGenerator.CreateToken(user.Id, user.TenantId);
-        await _tokenRepository.AddRefreshToken(refreshToken);
+        await _tokenRepository.AddRefreshTokenSafe(refreshToken, ct);
         return new ResponseRegisteredUserJson(user.Id, user.Username);
     }
 

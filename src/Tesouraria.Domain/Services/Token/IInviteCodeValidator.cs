@@ -1,8 +1,9 @@
+using Tesouraria.Domain.Dtos.ReadModels;
 using Tesouraria.Domain.Entities.ValueObjects;
 
 namespace Tesouraria.Domain.Services.Token;
 
 public interface IInviteCodeValidator
 {
-    public Task<InviteCode> ValidateAndGetCode(string code, CancellationToken ct = default);
+    public Task<InviteCodeReadModel> ValidateAndGetCode(string code, CancellationToken ct = default);
 }
