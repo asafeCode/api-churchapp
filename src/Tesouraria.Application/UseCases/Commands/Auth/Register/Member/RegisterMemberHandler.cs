@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using Tesouraria.Application.Mappers;
 using Tesouraria.Domain.Abstractions.Mediator;
 using Tesouraria.Domain.Dtos.Responses.Users;
+using Tesouraria.Domain.Entities.Helpers;
+using Tesouraria.Domain.Exceptions;
 using Tesouraria.Domain.Exceptions.ExceptionsBase;
 using Tesouraria.Domain.Repositories.Tenant;
 using Tesouraria.Domain.Repositories.Token;
@@ -16,7 +19,7 @@ public class RegisterMemberHandler : ICommandHandler<RegisterMemberCommand, Resp
     private readonly IUserWriteRepository _writeRepository;
     private readonly IRefreshTokenGenerator _refreshTokenGenerator;
     private readonly IInviteCodeValidator _codeValidator;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly IUserReadRepository _readRepository;
     private readonly ITokenRepository _tokenRepository;
     private readonly IAccessTokenGenerator _tokenGenerator;
 
@@ -27,7 +30,7 @@ public class RegisterMemberHandler : ICommandHandler<RegisterMemberCommand, Resp
         ITokenRepository tokenRepository, 
         IAccessTokenGenerator tokenGenerator, 
         IInviteCodeValidator codeValidator, 
-        ITenantRepository tenantRepository)
+        IUserReadRepository readRepository)
     {
         _passwordEncripter = passwordEncripter;
         _writeRepository = writeRepository;
@@ -35,11 +38,14 @@ public class RegisterMemberHandler : ICommandHandler<RegisterMemberCommand, Resp
         _tokenRepository = tokenRepository;
         _tokenGenerator = tokenGenerator;
         _codeValidator = codeValidator;
-        _tenantRepository = tenantRepository;
+        _readRepository = readRepository;
     }
     public async Task<ResponseLoggedUserJson> HandleAsync(RegisterMemberCommand command, CancellationToken ct = default)
     {
         var inviteCode = await _codeValidator.ValidateAndGetCode(command.InviteCode, ct);
+        
+        var exists = await _readRepository.ExistsUserWithName(command.Name.NormalizeUsername(), inviteCode.TenantId, ct);
+        if ( exists ) throw new ValidationException(ResourceMessagesException.NAME_ALREADY_REGISTERED);
         
         var user = command.ToMember(_passwordEncripter, inviteCode.TenantId);
         await _writeRepository.AddUserAsync(user);

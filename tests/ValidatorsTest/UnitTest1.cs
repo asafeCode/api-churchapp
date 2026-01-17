@@ -20,7 +20,7 @@ public class UnitTest1
         mockRepo.Setup(r => r.ExistsUserWithName(It.IsAny<string>(), It.IsAny<Guid>(), default))
             .ReturnsAsync(true); // Simula nome já cadastrado
 
-        var validator = new RegisterMemberValidator(mockUser.Object, mockRepo.Object);
+        var validator = new RegisterMemberValidator();
 
         var command = new RegisterMemberCommand
         {

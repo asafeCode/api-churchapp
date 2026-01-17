@@ -9,7 +9,7 @@ namespace Tesouraria.Application.UseCases.Commands.Auth.Register.Member;
 
 public class RegisterMemberValidator : AbstractValidator<RegisterMemberCommand>
 {
-    public RegisterMemberValidator(ILoggedUser user, IUserReadRepository repository)
+    public RegisterMemberValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("O nome é obrigatório.")
@@ -20,13 +20,5 @@ public class RegisterMemberValidator : AbstractValidator<RegisterMemberCommand>
             .NotEmpty().WithMessage("Código de convite não pode ser vazio.")
             .Must(cmd => Guid.TryParse(cmd, out _))
             .WithMessage("Código de convite inválido.");
-        
-        RuleFor(x => x)
-            .CustomAsync(async (command, context, cancellation) =>
-            {
-                var (_, tenantId) = user.User();
-                if (await repository.ExistsUserWithName(command.Name.NormalizeUsername(), tenantId, cancellation))
-                    context.AddFailure("Name", ResourceMessagesException.NAME_ALREADY_REGISTERED);
-            });
     }
 }
