@@ -29,8 +29,6 @@ public class ChangePasswordHandler : ICommandHandler<ChangePasswordCommand>
         
         user.UpdatePassword( _passwordEncripter.Encrypt(request.NewPassword));
         
-        _repository.Update(user);
-        
         return Unit.Value;
     }
 

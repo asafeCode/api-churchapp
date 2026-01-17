@@ -2,7 +2,6 @@
 using Tesouraria.API.Attributes;
 using Tesouraria.API.Controllers.Base;
 using Tesouraria.Application.UseCases.Commands.User.ChangePassword;
-using Tesouraria.Application.UseCases.Commands.User.Delete;
 using Tesouraria.Application.UseCases.Commands.User.Update;
 using Tesouraria.Application.UseCases.Queries.UserProfile;
 using Tesouraria.Domain.Abstractions.Mediator;
@@ -44,15 +43,4 @@ public class UserController : TesourariaControllerBase
         await handler.SendAsync(command);
         return NoContent();
     }  
-    
-    [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Delete([FromServices] IMediator handler, 
-        [FromQuery] bool force)
-    {
-        var command = new SelfDeleteUserCommand(force); 
-        await handler.SendAsync(command);
-        return NoContent();
-    }
 }

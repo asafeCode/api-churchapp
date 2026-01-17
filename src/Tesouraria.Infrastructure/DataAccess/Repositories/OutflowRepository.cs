@@ -14,6 +14,10 @@ public class OutflowRepository : IOutflowRepository
     public OutflowRepository(TesourariaDbContext dbContext) => _dbContext = dbContext;
     
     public async Task Add(Outflow outflow, CancellationToken ct = default) => await _dbContext.Outflows.AddAsync(outflow, ct);
+    public Task<Outflow?> GetForUpdate(Guid outflowId, Guid tenantId, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<Outflow?> GetById(Guid outflowId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Outflows.AsNoTracking().SingleOrDefaultAsync(o => o.Id  == outflowId && o.Active && o.TenantId == tenantId, ct);
@@ -56,6 +60,8 @@ public class OutflowRepository : IOutflowRepository
         var result = await query
             .Select(o => new OutflowDashboardReadModel(
                 o.Id,
+                o.Description ?? "—",
+                o.Expense.Type,
                 o.Expense.Name,
                 o.Date,
                 o.Amount,
@@ -65,12 +71,5 @@ public class OutflowRepository : IOutflowRepository
             .ToListAsync(ct);
 
         return new OutflowsDashboardReadModel(Outflows: result, TotalAmount: totalAmount);
-    }
-    
-    public void Update(Outflow outflow) => _dbContext.Outflows.Update(outflow);
-
-    public Task Delete(Outflow outflow, Guid tenantId,  CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
     }
 }

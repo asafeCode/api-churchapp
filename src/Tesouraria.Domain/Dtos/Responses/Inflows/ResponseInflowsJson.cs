@@ -11,8 +11,7 @@ public record ResponseInflowsJson
 
 public record ResponseShortInflowJson(
     Guid Id,
-    Guid WorshipId,
-    Guid MemberId,
+    string Description,
     DateOnly Date,
     InflowType InflowType,
     string MemberName,

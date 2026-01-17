@@ -34,11 +34,6 @@ public sealed class TokenRepository :  ITokenRepository
         await _dbContext.RefreshTokens.AddAsync(refreshToken, ct);
     }
 
-    public async Task<Tenant?> GetTenantByInviteCode(InviteCode inviteCode, CancellationToken ct = default) => await _dbContext
-        .Tenants
-        .AsNoTracking()
-        .FirstOrDefaultAsync(t => t.Id == inviteCode.TenantId, ct);
-
     public async Task<InviteCodeReadModel?> GetInviteCode(string code, CancellationToken ct = default) =>
         await _dbContext
             .InviteCodes

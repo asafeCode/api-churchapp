@@ -25,8 +25,6 @@ public class UpdateUserHandler : ICommandHandler<UpdateUserCommand>
         var user = await _updateRepository.GetUserById(loggedUserId, tenantId, ct);
         
         command.ToUpdatedUser(user);
-        _updateRepository.Update(user);
         return Unit.Value;
     }
-
 }

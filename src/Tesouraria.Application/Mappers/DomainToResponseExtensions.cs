@@ -54,6 +54,8 @@ public static class DomainToRequestExtensions
     {
         var response = outflows.Select(outflow => new ResponseShortOutflowJson(
             outflow.Id,
+            outflow.Description,
+            outflow.ExpenseType,
             outflow.ExpenseName,
             outflow.Date,
             outflow.Amount,
@@ -76,8 +78,7 @@ public static class DomainToRequestExtensions
     {
         var response = inflowReadModel.Select(inflow => new ResponseShortInflowJson(
             inflow.Id,
-            inflow.WorshipId ?? Guid.Empty,
-            inflow.MemberId ?? Guid.Empty,
+            inflow.Description,
             inflow.Date,
             inflow.InflowType,
             inflow.MemberName,

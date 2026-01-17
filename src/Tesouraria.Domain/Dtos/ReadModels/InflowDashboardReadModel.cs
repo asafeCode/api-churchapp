@@ -4,8 +4,7 @@ namespace Tesouraria.Domain.Dtos.ReadModels;
 
 public record InflowDashboardReadModel(
     Guid Id,
-    Guid? WorshipId,
-    Guid? MemberId,
+    string Description,
     DateOnly Date,
     InflowType InflowType,
     string MemberName,

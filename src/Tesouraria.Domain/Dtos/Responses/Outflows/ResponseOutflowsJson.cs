@@ -10,6 +10,8 @@ public record ResponseOutflowsJson
 
 public record ResponseShortOutflowJson(
     Guid Id,
+    string Description,
+    ExpenseType ExpenseType,
     string ExpenseName,
     DateOnly Date,
     decimal Amount,

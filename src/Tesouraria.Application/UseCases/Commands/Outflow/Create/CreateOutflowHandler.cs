@@ -48,7 +48,6 @@ public class CreateOutflowHandler : ICommandHandler<CreateOutflowCommand, Respon
         if ( expense.Type == ExpenseType.Installment )
         {
             expense.CurrentInstallment += 1;
-            _expenseRepository.Update(expense);
         }
         var outflow = command.ToOutflow(loggedUserId, tenantId, expense);
 

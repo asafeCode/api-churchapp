@@ -11,11 +11,6 @@ public class ExpenseRepository : IExpenseRepository
     public async Task Add(Expense expense, CancellationToken ct = default) => await _dbContext
         .Expenses
         .AddAsync(expense, ct);
-
-    public async Task<bool> ExistActiveExpenseWithId(Guid expenseId, Guid tenantId, CancellationToken ct = default) => await _dbContext
-        .Expenses
-        .AsNoTracking()
-        .AnyAsync(expense => expense.Id == expenseId && expense.TenantId == tenantId, ct);
     
     public async Task<IEnumerable<Expense>> GetAll(Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Expenses
@@ -28,9 +23,6 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<Expense?> GetByIdWithoutTracking(Guid expenseId, Guid tenantId, CancellationToken ct = default) => await _dbContext.Expenses
         .AsNoTracking()
         .FirstOrDefaultAsync(exp => exp.Id == expenseId && exp.TenantId == tenantId, ct);
-    
-    public void Update(Expense expense) => _dbContext.Expenses
-        .Update(expense);
 
     public Task Delete(Expense expense, CancellationToken ct = default)
     {

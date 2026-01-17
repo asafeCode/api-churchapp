@@ -26,11 +26,7 @@ public class WorshipRepository : IWorshipRepository
             .OrderByDescending(w => w.CreatedOn)
             .ToListAsync(ct);
 
-    public void Update(Worship worship, CancellationToken ct = default) => _dbContext
-        .Worships
-        .Update(worship);
-    
-    public Task Delete(Worship worship, Guid tenantId, CancellationToken ct = default)
+    public Task<IEnumerable<Worship>> GetForUpdate(Guid tenantId, CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }

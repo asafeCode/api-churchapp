@@ -15,6 +15,11 @@ public class InflowRepository : IInflowRepository
     public async Task Add(Inflow inflow, CancellationToken cancellationToken = default) => await _dbContext
         .Inflows.AddAsync(inflow, cancellationToken);
 
+    public Task<Inflow?> GetForUpdate(Guid inflowId, Guid tenantId, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Inflow?> GetById(Guid inflowId, Guid tenantId, CancellationToken ct = default) => await _dbContext
         .Inflows
         .AsNoTracking()
@@ -76,8 +81,7 @@ public class InflowRepository : IInflowRepository
         var result = await query
             .Select(i => new InflowDashboardReadModel(
                 i.Id,
-                i.Worship != null? i.WorshipId : Guid.Empty,
-                i.Member != null? i.MemberId : Guid.Empty,
+                i.Description ?? "—",
                 i.Date,
                 i.Type,
                 i.Member != null ? i.Member.Username : "—",
@@ -89,12 +93,6 @@ public class InflowRepository : IInflowRepository
             .ToListAsync(ct);
         
         return new InflowsDashboardReadModel(result, totalAmount);
-    }
-    
-    public void Update(Inflow inflow) => _dbContext.Inflows.Update(inflow);
-    public Task Delete(Inflow inflow, Guid tenantId, CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
     }
     
 }
